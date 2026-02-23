@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
+import { getNowHK } from '@/lib/hktime'
 
 const OPERATING_HOURS = {
   start: 0,
@@ -30,12 +31,8 @@ export async function GET(request: NextRequest) {
 
     const bookedTimes = new Set(bookings.map(b => b.startTime))
 
-    const today = new Date()
-    const slotDate = new Date(date + 'T00:00:00')
-    const isToday =
-      slotDate.getFullYear() === today.getFullYear() &&
-      slotDate.getMonth() === today.getMonth() &&
-      slotDate.getDate() === today.getDate()
+    const nowHK = getNowHK()
+    const isToday = date === nowHK.date
 
     const slots = []
     for (let hour = OPERATING_HOURS.start; hour < OPERATING_HOURS.end; hour++) {
@@ -43,7 +40,7 @@ export async function GET(request: NextRequest) {
       const endTime = `${String(hour + 1).padStart(2, '0')}:00`
 
       const isBooked = bookedTimes.has(startTime)
-      const isPast = isToday && hour <= today.getHours()
+      const isPast = isToday && hour <= nowHK.hour
       const available = !isBooked && !isPast
 
       slots.push({ startTime, endTime, available, isPast, isBooked })

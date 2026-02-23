@@ -51,11 +51,12 @@ export async function POST(request: NextRequest) {
     const price = getBookingPrice(date, startTime)
     const isPeak = isPeakTime(date, startTime)
 
-    // Format date for display
-    const displayDate = new Date(date + 'T00:00:00').toLocaleDateString('zh-TW', {
+    // Format date for display (HK timezone)
+    const displayDate = new Date(date + 'T12:00:00Z').toLocaleDateString('zh-TW', {
       year: 'numeric',
       month: 'long',
-      day: 'numeric'
+      day: 'numeric',
+      timeZone: 'Asia/Hong_Kong'
     })
 
     // Create pending booking

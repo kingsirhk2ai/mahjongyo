@@ -1,3 +1,5 @@
+import { getDayOfWeekHK } from '@/lib/hktime'
+
 // Flat pricing configuration
 export const PEAK_PRICE = 5000 // $50/hr
 export const OFF_PEAK_PRICE = 4000 // $40/hr
@@ -5,8 +7,7 @@ export const OFF_PEAK_PRICE = 4000 // $40/hr
 // Peak = Mon-Thu after 6pm, Fri-Sun all day, public holidays
 // Off-peak = Mon-Thu before 6pm
 export function isPeakTime(date: string, startTime: string): boolean {
-  const bookingDate = new Date(date + 'T00:00:00')
-  const dayOfWeek = bookingDate.getDay() // 0 = Sunday, 6 = Saturday
+  const dayOfWeek = getDayOfWeekHK(date) // 0 = Sunday, 6 = Saturday
   const hour = parseInt(startTime.split(':')[0])
 
   // Friday (5), Saturday (6), Sunday (0) = always peak

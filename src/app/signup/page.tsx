@@ -126,8 +126,8 @@ export default function SignupPage() {
               <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-2">
                 {t.signup.phone} <span className="text-gray-400">{t.signup.phoneOptional}</span>
               </label>
-              <div className="flex">
-                <span className="inline-flex items-center px-3 bg-gray-100 border border-r-0 border-gray-300 rounded-l-xl text-gray-500 text-sm font-medium">
+              <div className="flex items-center w-full bg-gray-50 border-2 border-gray-200 rounded-xl focus-within:bg-white focus-within:border-green-500 focus-within:ring-4 focus-within:ring-green-500/10 transition-all duration-200">
+                <span className="pl-4 pr-2 text-gray-500 text-sm font-medium select-none">
                   +852
                 </span>
                 <input
@@ -141,7 +141,7 @@ export default function SignupPage() {
                       : digits
                     setPhone(formatted)
                   }}
-                  className="input-modern rounded-l-none"
+                  className="w-full py-3 pr-4 bg-transparent outline-none"
                   placeholder={t.signup.phonePlaceholder}
                   maxLength={9}
                 />
