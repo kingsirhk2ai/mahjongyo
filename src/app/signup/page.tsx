@@ -126,14 +126,26 @@ export default function SignupPage() {
               <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-2">
                 {t.signup.phone} <span className="text-gray-400">{t.signup.phoneOptional}</span>
               </label>
-              <input
-                type="tel"
-                id="phone"
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-                className="input-modern"
-                placeholder="(555) 123-4567"
-              />
+              <div className="flex">
+                <span className="inline-flex items-center px-3 bg-gray-100 border border-r-0 border-gray-300 rounded-l-xl text-gray-500 text-sm font-medium">
+                  +852
+                </span>
+                <input
+                  type="tel"
+                  id="phone"
+                  value={phone}
+                  onChange={(e) => {
+                    const digits = e.target.value.replace(/\D/g, '').slice(0, 8)
+                    const formatted = digits.length > 4
+                      ? `${digits.slice(0, 4)} ${digits.slice(4)}`
+                      : digits
+                    setPhone(formatted)
+                  }}
+                  className="input-modern rounded-l-none"
+                  placeholder={t.signup.phonePlaceholder}
+                  maxLength={9}
+                />
+              </div>
             </div>
 
             <div>

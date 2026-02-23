@@ -1,8 +1,10 @@
 'use client'
 
+import { useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { useLanguage } from '@/lib/i18n/LanguageContext'
+import type { TranslationKeys } from '@/lib/i18n/translations'
 
 export default function Home() {
   const { t, language } = useLanguage()
@@ -271,8 +273,8 @@ export default function Home() {
                     <CheckIcon className="w-5 h-5 text-green-600" />
                   </div>
                   <div>
-                    <h4 className="font-semibold text-gray-800">{t.home.freeCancellation}</h4>
-                    <p className="text-gray-600 text-sm">{t.home.freeCancellationDesc}</p>
+                    <h4 className="font-semibold text-gray-800">{t.home.parking}</h4>
+                    <p className="text-gray-600 text-sm">{t.home.parkingDesc}</p>
                   </div>
                 </div>
 
@@ -352,6 +354,9 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* FAQ Section */}
+      <FAQSection t={t} />
 
       {/* CTA Section */}
       <section className="py-16 bg-gradient-hero text-white">
@@ -462,5 +467,65 @@ function LocationIcon({ className }: { className?: string }) {
       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
     </svg>
+  )
+}
+
+function ChevronIcon({ className, open }: { className?: string; open: boolean }) {
+  return (
+    <svg
+      className={`${className} transition-transform duration-200 ${open ? 'rotate-180' : ''}`}
+      fill="none"
+      stroke="currentColor"
+      viewBox="0 0 24 24"
+    >
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+    </svg>
+  )
+}
+
+function FAQItem({ question, answer }: { question: string; answer: string }) {
+  const [open, setOpen] = useState(false)
+
+  return (
+    <div className="border-b border-gray-200 last:border-b-0">
+      <button
+        type="button"
+        className="w-full flex items-center justify-between py-5 text-left"
+        onClick={() => setOpen((prev) => !prev)}
+      >
+        <span className="text-lg font-semibold text-gray-800">{question}</span>
+        <ChevronIcon className="w-5 h-5 text-gray-500 flex-shrink-0 ml-4" open={open} />
+      </button>
+      {open && (
+        <div className="pb-5 text-gray-600 leading-relaxed">
+          {answer}
+        </div>
+      )}
+    </div>
+  )
+}
+
+function FAQSection({ t }: { t: TranslationKeys }) {
+  const faqs = [
+    { q: t.home.faq1Q, a: t.home.faq1A },
+    { q: t.home.faq2Q, a: t.home.faq2A },
+    { q: t.home.faq3Q, a: t.home.faq3A },
+    { q: t.home.faq4Q, a: t.home.faq4A },
+    { q: t.home.faq5Q, a: t.home.faq5A },
+  ]
+
+  return (
+    <section className="py-20 bg-white">
+      <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-10 text-center">
+          {t.home.faqTitle}
+        </h2>
+        <div className="card p-8">
+          {faqs.map((faq, i) => (
+            <FAQItem key={i} question={faq.q} answer={faq.a} />
+          ))}
+        </div>
+      </div>
+    </section>
   )
 }
