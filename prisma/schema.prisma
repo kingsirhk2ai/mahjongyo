@@ -1,0 +1,78 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  password      String
+  name          String
+  phone         String?
+  membership    String    @default("rookie") // rookie, player, pro, master, legend
+  balance       Int       @default(0) // Balance in cents
+  totalSpent    Int       @default(0) // Total spending in cents for membership upgrade
+  sessionId     String?   // Visitor session ID from registration
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  bookings      Booking[]
+  transactions  Transaction[]
+}
+
+model Booking {
+  id            String   @id @default(cuid())
+  date          String   // YYYY-MM-DD format
+  startTime     String   // HH:MM format (24-hour)
+  endTime       String   // HH:MM format (24-hour)
+  userId        String
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  status        String   @default("confirmed") // confirmed, cancelled
+  amount        Int      // Amount in cents
+  isPeak        Boolean  @default(false)
+  createdAt     DateTime @default(now())
+
+  @@unique([date, startTime])
+}
+
+model Transaction {
+  id            String   @id @default(cuid())
+  userId        String
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type          String   // deposit, booking, refund
+  amount        Int      // Amount in cents (positive for deposit, negative for booking)
+  description   String
+  paymentId     String?  // Stripe payment ID for deposits
+  createdAt     DateTime @default(now())
+}
+
+model Session {
+  id            String   @id @default(cuid())
+  visitorId     String   @unique // UUID stored in browser
+  userId        String?  // Linked when user registers/logs in
+  userAgent     String?
+  ipAddress     String?
+  referrer      String?
+  landingPage   String?
+  createdAt     DateTime @default(now())
+  lastActiveAt  DateTime @default(now())
+  events        Event[]
+}
+
+model Event {
+  id            String   @id @default(cuid())
+  sessionId     String
+  session       Session  @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  eventType     String   // page_view, click, booking_start, booking_complete, login, signup, etc.
+  eventData     String?  // JSON string for additional data
+  page          String?  // Current page URL
+  element       String?  // Element clicked (button name, link text, etc.)
+  createdAt     DateTime @default(now())
+
+  @@index([sessionId])
+  @@index([eventType])
+  @@index([createdAt])
+}
