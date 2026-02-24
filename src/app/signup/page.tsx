@@ -1,15 +1,15 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, Suspense } from 'react'
 import { signIn } from 'next-auth/react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
 import Toast, { useToast } from '@/components/Toast'
 import { useLanguage } from '@/lib/i18n/LanguageContext'
 import { getVisitorId, trackEvent, EventTypes } from '@/lib/tracking'
 
-export default function SignupPage() {
+function SignupForm() {
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [phone, setPhone] = useState('')
@@ -17,8 +17,11 @@ export default function SignupPage() {
   const [confirmPassword, setConfirmPassword] = useState('')
   const [loading, setLoading] = useState(false)
   const router = useRouter()
+  const searchParams = useSearchParams()
   const toast = useToast()
   const { t } = useLanguage()
+
+  const callbackUrl = searchParams.get('callbackUrl') || '/book'
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -64,7 +67,7 @@ export default function SignupPage() {
         toast.error(result.error)
       } else {
         toast.success(t.signup.accountCreated)
-        router.push('/book')
+        router.push(callbackUrl)
         router.refresh()
       }
     } catch (error) {
@@ -199,7 +202,7 @@ export default function SignupPage() {
           <div className="mt-6 text-center">
             <p className="text-gray-600">
               {t.signup.hasAccount}{' '}
-              <Link href="/login" className="text-green-600 font-medium hover:text-green-700">
+              <Link href={callbackUrl !== '/book' ? `/login?callbackUrl=${encodeURIComponent(callbackUrl)}` : '/login'} className="text-green-600 font-medium hover:text-green-700">
                 {t.signup.signIn}
               </Link>
             </p>
@@ -209,6 +212,18 @@ export default function SignupPage() {
 
       <Toast toasts={toast.toasts} onRemove={toast.removeToast} />
     </div>
+  )
+}
+
+export default function SignupPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4">
+        <div className="max-w-md w-full"><div className="card p-8"><div className="skeleton h-96 rounded-xl" /></div></div>
+      </div>
+    }>
+      <SignupForm />
+    </Suspense>
   )
 }
 

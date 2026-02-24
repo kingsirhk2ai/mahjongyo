@@ -27,8 +27,12 @@ function CancelledBanner() {
 }
 
 function BookingContent() {
-  const [selectedDate, setSelectedDate] = useState('')
-  const [selectedTimes, setSelectedTimes] = useState<string[]>([])
+  const searchParams = useSearchParams()
+  const initialDate = searchParams.get('date') || ''
+  const initialTimes = searchParams.get('times')?.split(',').filter(Boolean) || []
+
+  const [selectedDate, setSelectedDate] = useState(initialDate)
+  const [selectedTimes, setSelectedTimes] = useState<string[]>(initialTimes)
   const [refreshKey, setRefreshKey] = useState(0)
   const toast = useToast()
   const { t, language } = useLanguage()
@@ -188,7 +192,9 @@ export default function BookPage() {
         <CancelledBanner />
       </Suspense>
 
-      <BookingContent />
+      <Suspense fallback={null}>
+        <BookingContent />
+      </Suspense>
     </div>
   )
 }

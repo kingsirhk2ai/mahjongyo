@@ -112,7 +112,7 @@ function LoginForm() {
         <div className="mt-6 text-center">
           <p className="text-gray-600">
             {t.login.noAccount}{' '}
-            <Link href="/signup" className="text-green-600 font-medium hover:text-green-700">
+            <Link href={callbackUrl !== '/book' ? `/signup?callbackUrl=${encodeURIComponent(callbackUrl)}` : '/signup'} className="text-green-600 font-medium hover:text-green-700">
               {t.login.signUp}
             </Link>
           </p>

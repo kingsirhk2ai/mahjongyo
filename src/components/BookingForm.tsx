@@ -105,6 +105,11 @@ export default function BookingForm({ selectedDate, selectedTimes, onBookingComp
   }
 
   if (!session) {
+    const bookCallbackUrl = selectedDate
+      ? `/book?date=${selectedDate}${selectedTimes.length > 0 ? `&times=${selectedTimes.join(',')}` : ''}`
+      : '/book'
+    const encodedCallback = encodeURIComponent(bookCallbackUrl)
+
     return (
       <div className="card p-6 animate-fade-in">
         <h3 className="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
@@ -120,13 +125,13 @@ export default function BookingForm({ selectedDate, selectedTimes, onBookingComp
           </p>
           <div className="space-y-3">
             <Link
-              href="/signup"
+              href={`/signup?callbackUrl=${encodedCallback}`}
               className="btn-primary w-full py-3 flex items-center justify-center gap-2"
             >
               {t.bookingForm.createAccount}
             </Link>
             <Link
-              href="/login?callbackUrl=/book"
+              href={`/login?callbackUrl=${encodedCallback}`}
               className="btn-secondary w-full py-3 flex items-center justify-center"
             >
               {t.nav.signIn}
