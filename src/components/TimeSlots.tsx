@@ -7,8 +7,7 @@ import { isPeakTime, getBookingPrice, formatPrice } from '@/lib/membership'
 interface TimeSlotsProps {
   selectedDate: string
   selectedTimes: string[]
-  onTimesChange: (times: string[]) => void
-  crossMidnightFrom?: string[]
+  onSlotClick: (time: string) => void
   label?: string
 }
 
@@ -20,34 +19,7 @@ interface Slot {
   isBooked: boolean
 }
 
-function getHour(time: string): number {
-  return parseInt(time.split(':')[0])
-}
-
-function isAdjacent(
-  times: string[],
-  candidate: string,
-  crossMidnightFrom?: string[]
-): 'before' | 'after' | false {
-  if (times.length === 0) {
-    // If no times selected on this day yet, check cross-midnight adjacency
-    if (crossMidnightFrom && crossMidnightFrom.includes('23:00')) {
-      const candidateHour = getHour(candidate)
-      if (candidateHour === 0) return 'after'
-    }
-    return false
-  }
-  const sorted = [...times].sort()
-  const firstHour = getHour(sorted[0])
-  const lastHour = getHour(sorted[sorted.length - 1])
-  const candidateHour = getHour(candidate)
-
-  if (candidateHour === firstHour - 1) return 'before'
-  if (candidateHour === lastHour + 1) return 'after'
-  return false
-}
-
-export default function TimeSlots({ selectedDate, selectedTimes, onTimesChange, crossMidnightFrom, label }: TimeSlotsProps) {
+export default function TimeSlots({ selectedDate, selectedTimes, onSlotClick, label }: TimeSlotsProps) {
   const { t } = useLanguage()
   const [slots, setSlots] = useState<Slot[]>([])
   const [loading, setLoading] = useState(false)
@@ -80,55 +52,7 @@ export default function TimeSlots({ selectedDate, selectedTimes, onTimesChange, 
   }
 
   const handleSlotClick = (startTime: string) => {
-    if (selectedTimes.length === 0) {
-      onTimesChange([startTime])
-      return
-    }
-
-    if (selectedTimes.includes(startTime)) {
-      // Clicking an already-selected slot: remove it and anything beyond it
-      const sorted = [...selectedTimes].sort()
-      const clickedIndex = sorted.indexOf(startTime)
-      // If it's the only one, deselect all
-      if (sorted.length === 1) {
-        onTimesChange([])
-        return
-      }
-
-      const firstHour = getHour(sorted[0])
-      const clickedHour = getHour(startTime)
-
-      if (clickedHour === firstHour) {
-        // Deselecting the first slot
-        // In cross-midnight mode, 00:00 is the bridge to Day 1.
-        // Removing it disconnects everything → clear all.
-        if (crossMidnightFrom) {
-          onTimesChange([])
-        } else {
-          onTimesChange(sorted.slice(1))
-        }
-      } else {
-        // Remove this slot and everything after it
-        onTimesChange(sorted.slice(0, clickedIndex))
-      }
-      return
-    }
-
-    const adjacency = isAdjacent(selectedTimes, startTime, crossMidnightFrom)
-    if (adjacency) {
-      // Extend selection
-      onTimesChange([...selectedTimes, startTime])
-    } else if (crossMidnightFrom && selectedTimes.length === 0 && getHour(startTime) === 0 && crossMidnightFrom.includes('23:00')) {
-      // Cross-midnight: first selection on Day 2 at 00:00
-      onTimesChange([startTime])
-    } else {
-      // Not adjacent: start new selection (only if not in cross-midnight mode)
-      if (crossMidnightFrom) {
-        // In cross-midnight mode, only allow adjacent extensions from 00:00
-        return
-      }
-      onTimesChange([startTime])
-    }
+    onSlotClick(startTime)
   }
 
   if (!selectedDate) {

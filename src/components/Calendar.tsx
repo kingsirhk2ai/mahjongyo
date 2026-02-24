@@ -6,10 +6,10 @@ import { useLanguage } from '@/lib/i18n/LanguageContext'
 interface CalendarProps {
   selectedDate: string
   onDateSelect: (date: string) => void
-  nextDate?: string
+  bookingDates?: string[]
 }
 
-export default function Calendar({ selectedDate, onDateSelect, nextDate }: CalendarProps) {
+export default function Calendar({ selectedDate, onDateSelect, bookingDates }: CalendarProps) {
   const { t, language } = useLanguage()
   const [currentMonth, setCurrentMonth] = useState(() => {
     const today = new Date()
@@ -76,7 +76,7 @@ export default function Calendar({ selectedDate, onDateSelect, nextDate }: Calen
   for (let day = 1; day <= daysInMonth; day++) {
     const dateStr = formatDate(currentMonth.getFullYear(), currentMonth.getMonth(), day)
     const isSelected = selectedDate === dateStr
-    const isNextDate = nextDate === dateStr
+    const isBookingDate = !isSelected && (bookingDates?.includes(dateStr) ?? false)
     const isPast = isPastDate(day)
     const isTooFar = isBeyondLimit(day)
     const isDisabled = isPast || isTooFar
@@ -90,7 +90,7 @@ export default function Calendar({ selectedDate, onDateSelect, nextDate }: Calen
         className={`h-11 w-11 rounded-xl flex items-center justify-center font-medium transition-all duration-200 relative ${
           isSelected
             ? 'bg-green-600 text-white shadow-lg shadow-green-500/30 scale-110'
-            : isNextDate
+            : isBookingDate
             ? 'bg-green-200 text-green-800 ring-2 ring-green-400'
             : isDisabled
             ? 'text-gray-300 cursor-not-allowed'

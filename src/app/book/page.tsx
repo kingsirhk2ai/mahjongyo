@@ -33,6 +33,10 @@ function isNextDay(date1: string, date2: string): boolean {
   return diff === 24 * 60 * 60 * 1000
 }
 
+function getHour(time: string): number {
+  return parseInt(time.split(':')[0])
+}
+
 function BookingContent() {
   const searchParams = useSearchParams()
   const initialDate = searchParams.get('date') || ''
@@ -40,6 +44,7 @@ function BookingContent() {
   const initialNextDate = searchParams.get('nextDate') || ''
   const initialNextDateTimes = searchParams.get('nextDateTimes')?.split(',').filter(Boolean) || []
 
+  const [viewingDate, setViewingDate] = useState(initialNextDate || initialDate)
   const [selectedDate, setSelectedDate] = useState(initialDate)
   const [selectedTimes, setSelectedTimes] = useState<string[]>(initialTimes)
   const [nextDate, setNextDate] = useState(initialNextDate)
@@ -49,71 +54,103 @@ function BookingContent() {
   const { t, language } = useLanguage()
 
   const isCrossMidnight = nextDate !== '' && nextDateTimes.length > 0
-  // When nextDate is set (even with 0 times selected yet), show nextDate slots
-  const activeDate = nextDate || selectedDate
 
   // Track booking page start
   useEffect(() => {
     trackEvent(EventTypes.BOOKING_START)
   }, [])
 
+  // Calendar click: just switch view, never clear times
   const handleDateSelect = (date: string) => {
-    // Already in cross-midnight mode
-    if (nextDate) {
-      if (date === selectedDate || date === nextDate) {
-        // Clicking Day 1 or Day 2 → no-op (Day 1 is summary, Day 2 is active)
-        return
-      }
-      // Completely different date → reset and start fresh
-      setSelectedDate(date)
-      setSelectedTimes([])
-      setNextDate('')
-      setNextDateTimes([])
-      trackEvent(EventTypes.BOOKING_DATE_SELECT, { eventData: { date } })
-      return
-    }
-
-    // If Day 1 has 23:00 selected and user clicks the next day → enter cross-midnight mode
-    if (
-      selectedDate &&
-      selectedTimes.includes('23:00') &&
-      isNextDay(selectedDate, date)
-    ) {
-      setNextDate(date)
-      // Don't clear selectedTimes — keep Day 1 selections
-      trackEvent(EventTypes.BOOKING_DATE_SELECT, { eventData: { date, crossMidnight: true } })
-      return
-    }
-
-    // Normal date change: reset everything
-    setSelectedDate(date)
-    setSelectedTimes([])
-    setNextDate('')
-    setNextDateTimes([])
+    setViewingDate(date)
     trackEvent(EventTypes.BOOKING_DATE_SELECT, { eventData: { date } })
   }
 
-  const handleTimesChange = (times: string[]) => {
-    if (isCrossMidnight || nextDate) {
-      // We're viewing the next-date TimeSlots — update nextDateTimes
-      // Stay in cross-midnight mode even if times is empty;
-      // user can exit via the X button on Day1Summary
-      setNextDateTimes(times)
-      if (times.length > 0) {
-        trackEvent(EventTypes.BOOKING_TIME_SELECT, { eventData: { date: nextDate, times } })
-      }
-    } else {
-      setSelectedTimes(times)
-      if (times.length > 0) {
-        trackEvent(EventTypes.BOOKING_TIME_SELECT, { eventData: { date: selectedDate, times } })
-      }
-    }
-  }
-
-  const handleBookingComplete = () => {
+  const clearAll = () => {
+    setSelectedDate('')
     setSelectedTimes([])
     setNextDate('')
     setNextDateTimes([])
+  }
+
+  // Check if a slot on `date` at `time` is consecutive with existing selections
+  const isSlotConsecutive = (date: string, time: string): boolean => {
+    if (selectedTimes.length === 0) return false
+    const hour = getHour(time)
+    const sortedDay1 = [...selectedTimes].sort()
+    const day1First = getHour(sortedDay1[0])
+    const day1Last = getHour(sortedDay1[sortedDay1.length - 1])
+
+    // Same date as Day 1
+    if (date === selectedDate) {
+      if (hour === day1First - 1) return true
+      if (hour === day1Last + 1 && nextDateTimes.length === 0) return true
+      return false
+    }
+
+    // Same date as Day 2
+    if (nextDate && date === nextDate && nextDateTimes.length > 0) {
+      const sortedDay2 = [...nextDateTimes].sort()
+      const day2Last = getHour(sortedDay2[sortedDay2.length - 1])
+      if (hour === day2Last + 1) return true
+      return false
+    }
+
+    // New date: cross-midnight bridge (Day 1 ends 23:00, new slot is 00:00 on next day)
+    if (day1Last === 23 && hour === 0 && isNextDay(selectedDate, date)) {
+      return true
+    }
+
+    return false
+  }
+
+  const addSlot = (date: string, time: string) => {
+    if (date === selectedDate) {
+      setSelectedTimes(prev => [...prev, time])
+    } else if (date === nextDate) {
+      setNextDateTimes(prev => [...prev, time])
+    } else if (isNextDay(selectedDate, date)) {
+      // New Day 2 (cross-midnight extension)
+      setNextDate(date)
+      setNextDateTimes([time])
+    }
+  }
+
+  // Unified slot click handler — all logic lives here
+  const handleSlotClick = (time: string) => {
+    const date = viewingDate
+
+    // Already selected? → clear all
+    const isOnDay1 = date === selectedDate && selectedTimes.includes(time)
+    const isOnDay2 = date === nextDate && nextDateTimes.includes(time)
+    if (isOnDay1 || isOnDay2) {
+      clearAll()
+      return
+    }
+
+    // No existing selections → start fresh
+    if (selectedTimes.length === 0) {
+      setSelectedDate(date)
+      setSelectedTimes([time])
+      return
+    }
+
+    // Consecutive → extend
+    if (isSlotConsecutive(date, time)) {
+      addSlot(date, time)
+      trackEvent(EventTypes.BOOKING_TIME_SELECT, { eventData: { date, time } })
+      return
+    }
+
+    // Not consecutive → reset and start fresh with this slot
+    setSelectedDate(date)
+    setSelectedTimes([time])
+    setNextDate('')
+    setNextDateTimes([])
+  }
+
+  const handleBookingComplete = () => {
+    clearAll()
     setRefreshKey(prev => prev + 1)
   }
 
@@ -161,9 +198,16 @@ function BookingContent() {
     return `${formatTime(firstTime)} - ${formatTime(endTime)}`
   }
 
+  // Which times to highlight on the currently viewed date
+  const viewingTimes = viewingDate === selectedDate
+    ? selectedTimes
+    : viewingDate === nextDate
+    ? nextDateTimes
+    : []
+
   return (
     <>
-      {selectedDate && (
+      {selectedDate && selectedTimes.length > 0 && (
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6 animate-slide-down">
           <div className="bg-green-50 border border-green-200 rounded-xl p-4 flex items-center justify-between">
             <div className="flex items-center gap-3">
@@ -198,18 +242,29 @@ function BookingContent() {
         <div className="grid lg:grid-cols-3 gap-6">
           <div>
             <Calendar
-              selectedDate={selectedDate}
+              selectedDate={viewingDate}
               onDateSelect={handleDateSelect}
-              nextDate={nextDate}
+              bookingDates={[selectedDate, nextDate].filter(Boolean)}
             />
           </div>
 
           <div key={refreshKey}>
-            {nextDate && (
+            {selectedTimes.length > 0 && viewingDate !== selectedDate && (
               <div className="mb-4">
                 <Day1Summary
                   date={formatShortDate(selectedDate)}
                   times={selectedTimes}
+                  formatTime={formatTime}
+                  onCancel={clearAll}
+                  t={t}
+                />
+              </div>
+            )}
+            {nextDateTimes.length > 0 && viewingDate !== nextDate && (
+              <div className="mb-4">
+                <Day1Summary
+                  date={formatShortDate(nextDate)}
+                  times={nextDateTimes}
                   formatTime={formatTime}
                   onCancel={() => {
                     setNextDate('')
@@ -220,11 +275,10 @@ function BookingContent() {
               </div>
             )}
             <TimeSlots
-              selectedDate={activeDate}
-              selectedTimes={nextDate ? nextDateTimes : selectedTimes}
-              onTimesChange={handleTimesChange}
-              crossMidnightFrom={nextDate ? selectedTimes : undefined}
-              label={nextDate ? formatShortDate(nextDate) : undefined}
+              selectedDate={viewingDate}
+              selectedTimes={viewingTimes}
+              onSlotClick={handleSlotClick}
+              label={viewingDate ? formatShortDate(viewingDate) : undefined}
             />
           </div>
 
