@@ -127,49 +127,40 @@ function BookingContent() {
     }
   }
 
-  // Keep only the first consecutive run from a sorted time array
-  const trimToConsecutive = (times: string[]): string[] => {
-    if (times.length <= 1) return times
+  const isConsecutiveBlock = (times: string[]): boolean => {
+    if (times.length <= 1) return true
     const sorted = [...times].sort()
-    const result = [sorted[0]]
     for (let i = 1; i < sorted.length; i++) {
-      if (getHour(sorted[i]) === getHour(sorted[i - 1]) + 1) {
-        result.push(sorted[i])
-      } else {
-        break
-      }
+      if (getHour(sorted[i]) !== getHour(sorted[i - 1]) + 1) return false
     }
-    return result
+    return true
   }
 
   // Unified slot click handler — all logic lives here
   const handleSlotClick = (time: string) => {
     const date = viewingDate
 
-    // Already selected? → remove just this slot, trim disconnected parts
+    // Already selected? → remove this slot if remainder is still consecutive, else clear all
     const isOnDay1 = date === selectedDate && selectedTimes.includes(time)
     const isOnDay2 = date === nextDate && nextDateTimes.includes(time)
     if (isOnDay1 || isOnDay2) {
-      let newDay1 = isOnDay1
-        ? trimToConsecutive(selectedTimes.filter(t => t !== time))
-        : [...selectedTimes]
-      let newDay2 = isOnDay2
-        ? trimToConsecutive(nextDateTimes.filter(t => t !== time))
-        : [...nextDateTimes]
+      const newDay1 = isOnDay1 ? selectedTimes.filter(t => t !== time) : [...selectedTimes]
+      const newDay2 = isOnDay2 ? nextDateTimes.filter(t => t !== time) : [...nextDateTimes]
 
-      // Check cross-midnight bridge still intact
-      if (newDay2.length > 0) {
+      // Check each date is still consecutive internally
+      const day1Ok = isConsecutiveBlock(newDay1)
+      const day2Ok = isConsecutiveBlock(newDay2)
+
+      // Check cross-midnight bridge if both dates have times
+      let bridgeOk = true
+      if (newDay1.length > 0 && newDay2.length > 0) {
         const sortedDay1 = [...newDay1].sort()
         const sortedDay2 = [...newDay2].sort()
-        const bridgeOk = sortedDay1.length > 0
-          && getHour(sortedDay1[sortedDay1.length - 1]) === 23
+        bridgeOk = getHour(sortedDay1[sortedDay1.length - 1]) === 23
           && getHour(sortedDay2[0]) === 0
-        if (!bridgeOk) {
-          newDay2 = []
-        }
       }
 
-      if (newDay1.length === 0) {
+      if (!day1Ok || !day2Ok || !bridgeOk || newDay1.length === 0) {
         clearAll()
       } else {
         setSelectedTimes(newDay1)
