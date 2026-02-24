@@ -240,7 +240,7 @@ export default function Home() {
             </h2>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-8 items-start">
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 items-start">
             {/* Step 1 */}
             <div className="flex flex-col items-center text-center relative">
               <div className="w-10 h-10 bg-green-100 text-green-700 rounded-full flex items-center justify-center text-lg font-bold mb-4">
@@ -249,7 +249,7 @@ export default function Home() {
               <h3 className="text-xl font-bold text-gray-800 mb-2">{t.home.step1Title}</h3>
               <p className="text-gray-600">{t.home.step1Desc}</p>
               {/* Connector line - hidden on mobile */}
-              <div className="hidden md:block absolute top-5 left-[calc(50%+32px)] w-[calc(100%-64px)] border-t-2 border-dashed border-green-200" />
+              <div className="hidden lg:block absolute top-5 left-[calc(50%+32px)] w-[calc(100%-64px)] border-t-2 border-dashed border-green-200" />
             </div>
 
             {/* Step 2 */}
@@ -260,16 +260,27 @@ export default function Home() {
               <h3 className="text-xl font-bold text-gray-800 mb-2">{t.home.step2Title}</h3>
               <p className="text-gray-600">{t.home.step2Desc}</p>
               {/* Connector line - hidden on mobile */}
-              <div className="hidden md:block absolute top-5 left-[calc(50%+32px)] w-[calc(100%-64px)] border-t-2 border-dashed border-green-200" />
+              <div className="hidden lg:block absolute top-5 left-[calc(50%+32px)] w-[calc(100%-64px)] border-t-2 border-dashed border-green-200" />
             </div>
 
             {/* Step 3 */}
-            <div className="flex flex-col items-center text-center">
+            <div className="flex flex-col items-center text-center relative">
               <div className="w-10 h-10 bg-green-100 text-green-700 rounded-full flex items-center justify-center text-lg font-bold mb-4">
                 3
               </div>
               <h3 className="text-xl font-bold text-gray-800 mb-2">{t.home.step3Title}</h3>
               <p className="text-gray-600">{t.home.step3Desc}</p>
+              {/* Connector line - hidden on mobile */}
+              <div className="hidden lg:block absolute top-5 left-[calc(50%+32px)] w-[calc(100%-64px)] border-t-2 border-dashed border-green-200" />
+            </div>
+
+            {/* Step 4 */}
+            <div className="flex flex-col items-center text-center">
+              <div className="w-10 h-10 bg-green-100 text-green-700 rounded-full flex items-center justify-center text-lg font-bold mb-4">
+                4
+              </div>
+              <h3 className="text-xl font-bold text-gray-800 mb-2">{t.home.step4Title}</h3>
+              <p className="text-gray-600">{t.home.step4Desc}</p>
             </div>
           </div>
 

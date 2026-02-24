@@ -86,13 +86,15 @@ export const translations = {
       faq5A: '自動麻雀枱、飲品任飲、座位獨立快充、舒適麻雀椅，應有盡有。',
       // How to Book
       howToBook: '點樣預約？',
-      howToBookSubtitle: '三步搞掂，輕鬆預約',
+      howToBookSubtitle: '四步搞掂，輕鬆預約',
       step1Title: '揀日期',
       step1Desc: '查看日曆，揀一個適合嘅日子',
       step2Title: '揀時段',
       step2Desc: '選擇一個或多個連續時段，靈活安排',
       step3Title: '網上付款',
       step3Desc: '安全網上付款，即時確認預約',
+      step4Title: '獲取QR Code',
+      step4Desc: '憑QR Code到場，即刻開枱打牌',
       bookNowCta: '立即預約',
     },
     // Book page
@@ -337,13 +339,15 @@ export const translations = {
       faq5A: 'Auto mahjong table, unlimited drinks, fast charging at every seat, and comfy mahjong chairs.',
       // How to Book
       howToBook: 'How to Book',
-      howToBookSubtitle: 'Book in 3 simple steps',
+      howToBookSubtitle: 'Book in 4 simple steps',
       step1Title: 'Pick a Date',
       step1Desc: 'Browse the calendar and choose your preferred day',
       step2Title: 'Choose Time Slots',
       step2Desc: 'Select one or more consecutive hours to suit your schedule',
       step3Title: 'Pay Online',
       step3Desc: 'Secure online payment with instant booking confirmation',
+      step4Title: 'Get QR Code',
+      step4Desc: 'Show your QR code on arrival and start playing right away',
       bookNowCta: 'Book Now',
     },
     // Book page
