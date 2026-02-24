@@ -58,6 +58,21 @@ function BookingContent() {
   }, [])
 
   const handleDateSelect = (date: string) => {
+    // Already in cross-midnight mode
+    if (nextDate) {
+      if (date === selectedDate || date === nextDate) {
+        // Clicking Day 1 or Day 2 → no-op (Day 1 is summary, Day 2 is active)
+        return
+      }
+      // Completely different date → reset and start fresh
+      setSelectedDate(date)
+      setSelectedTimes([])
+      setNextDate('')
+      setNextDateTimes([])
+      trackEvent(EventTypes.BOOKING_DATE_SELECT, { eventData: { date } })
+      return
+    }
+
     // If Day 1 has 23:00 selected and user clicks the next day → enter cross-midnight mode
     if (
       selectedDate &&
@@ -81,13 +96,11 @@ function BookingContent() {
   const handleTimesChange = (times: string[]) => {
     if (isCrossMidnight || nextDate) {
       // We're viewing the next-date TimeSlots — update nextDateTimes
+      // Stay in cross-midnight mode even if times is empty;
+      // user can exit via the X button on Day1Summary
       setNextDateTimes(times)
       if (times.length > 0) {
         trackEvent(EventTypes.BOOKING_TIME_SELECT, { eventData: { date: nextDate, times } })
-      }
-      // If all next-date times deselected, exit cross-midnight mode
-      if (times.length === 0) {
-        setNextDate('')
       }
     } else {
       setSelectedTimes(times)

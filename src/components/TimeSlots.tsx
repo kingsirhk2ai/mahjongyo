@@ -94,15 +94,19 @@ export default function TimeSlots({ selectedDate, selectedTimes, onTimesChange, 
         onTimesChange([])
         return
       }
-      // If clicking the first slot, remove it (shrink from start)
-      // If clicking the last slot, remove it (shrink from end)
-      // If clicking a middle slot, remove it and everything after
+
       const firstHour = getHour(sorted[0])
       const clickedHour = getHour(startTime)
-      const lastHour = getHour(sorted[sorted.length - 1])
 
       if (clickedHour === firstHour) {
-        onTimesChange(sorted.slice(1))
+        // Deselecting the first slot
+        // In cross-midnight mode, 00:00 is the bridge to Day 1.
+        // Removing it disconnects everything → clear all.
+        if (crossMidnightFrom) {
+          onTimesChange([])
+        } else {
+          onTimesChange(sorted.slice(1))
+        }
       } else {
         // Remove this slot and everything after it
         onTimesChange(sorted.slice(0, clickedIndex))
