@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, Suspense, useEffect } from 'react'
+import { useState, Suspense, useEffect, useRef } from 'react'
 import { useSearchParams } from 'next/navigation'
 import Calendar from '@/components/Calendar'
 import TimeSlots from '@/components/TimeSlots'
@@ -44,12 +44,16 @@ function BookingContent() {
   const initialNextDate = searchParams.get('nextDate') || ''
   const initialNextDateTimes = searchParams.get('nextDateTimes')?.split(',').filter(Boolean) || []
 
-  const [viewingDate, setViewingDate] = useState(initialNextDate || initialDate)
+  const today = new Date()
+  const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`
+
+  const [viewingDate, setViewingDate] = useState(initialNextDate || initialDate || todayStr)
   const [selectedDate, setSelectedDate] = useState(initialDate)
   const [selectedTimes, setSelectedTimes] = useState<string[]>(initialTimes)
   const [nextDate, setNextDate] = useState(initialNextDate)
   const [nextDateTimes, setNextDateTimes] = useState<string[]>(initialNextDateTimes)
   const [refreshKey, setRefreshKey] = useState(0)
+  const timeSlotsRef = useRef<HTMLDivElement>(null)
   const toast = useToast()
   const { t, language } = useLanguage()
 
@@ -64,6 +68,10 @@ function BookingContent() {
   const handleDateSelect = (date: string) => {
     setViewingDate(date)
     trackEvent(EventTypes.BOOKING_DATE_SELECT, { eventData: { date } })
+    // Scroll to time slots section
+    setTimeout(() => {
+      timeSlotsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    }, 50)
   }
 
   const clearAll = () => {
@@ -161,7 +169,15 @@ function BookingContent() {
       }
 
       if (!day1Ok || !day2Ok || !bridgeOk || newDay1.length === 0) {
-        clearAll()
+        // If Day 1 empty but Day 2 still has consecutive times, promote Day 2 to Day 1
+        if (newDay1.length === 0 && newDay2.length > 0 && day2Ok) {
+          setSelectedDate(nextDate)
+          setSelectedTimes(newDay2)
+          setNextDate('')
+          setNextDateTimes([])
+        } else {
+          clearAll()
+        }
       } else {
         setSelectedTimes(newDay1)
         if (newDay2.length > 0) {
@@ -294,7 +310,7 @@ function BookingContent() {
             />
           </div>
 
-          <div key={refreshKey}>
+          <div key={refreshKey} ref={timeSlotsRef}>
             {selectedTimes.length > 0 && viewingDate !== selectedDate && (
               <div className="mb-4">
                 <Day1Summary
