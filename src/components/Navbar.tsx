@@ -88,7 +88,7 @@ export default function Navbar() {
                     </Link>
                   )}
                   <Link
-                    href="/membership"
+                    href="/profile"
                     className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center hover:bg-green-200 transition-colors"
                   >
                     <span className="text-green-700 font-semibold text-sm">
@@ -178,7 +178,7 @@ export default function Navbar() {
                     )}
                     <div className="flex items-center gap-3 px-4 py-2">
                       <Link
-                        href="/membership"
+                        href="/profile"
                         onClick={() => setMobileMenuOpen(false)}
                         className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center hover:bg-green-200 transition-colors"
                       >
