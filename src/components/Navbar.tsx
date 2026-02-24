@@ -78,12 +78,22 @@ export default function Navbar() {
               {status === 'loading' ? (
                 <div className="w-20 h-9 skeleton rounded-xl" />
               ) : session ? (
-                <button
-                  onClick={handleLogout}
-                  className="px-4 py-2 text-gray-600 hover:text-red-600 hover:bg-red-50 rounded-xl font-medium transition-colors"
-                >
-                  {t.nav.signOut}
-                </button>
+                <div className="flex items-center gap-2">
+                  <Link
+                    href="/membership"
+                    className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center hover:bg-green-200 transition-colors"
+                  >
+                    <span className="text-green-700 font-semibold text-sm">
+                      {session.user.name?.charAt(0).toUpperCase()}
+                    </span>
+                  </Link>
+                  <button
+                    onClick={handleLogout}
+                    className="px-3 py-1.5 text-sm text-gray-600 hover:text-red-600 hover:bg-red-50 rounded-xl font-medium transition-colors"
+                  >
+                    {t.nav.signOut}
+                  </button>
+                </div>
               ) : (
                 <>
                   <Link
@@ -148,12 +158,23 @@ export default function Navbar() {
               {/* Mobile Auth */}
               <div className="mt-4 pt-4 border-t border-gray-200">
                 {session ? (
-                  <button
-                    onClick={handleLogout}
-                    className="w-full px-4 py-3 text-left text-red-600 hover:bg-red-50 rounded-xl font-medium transition-colors"
-                  >
-                    {t.nav.signOut}
-                  </button>
+                  <div className="flex items-center gap-3 px-4 py-2">
+                    <Link
+                      href="/membership"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center hover:bg-green-200 transition-colors"
+                    >
+                      <span className="text-green-700 font-semibold text-sm">
+                        {session.user.name?.charAt(0).toUpperCase()}
+                      </span>
+                    </Link>
+                    <button
+                      onClick={handleLogout}
+                      className="text-red-600 hover:bg-red-50 px-3 py-2 rounded-xl font-medium transition-colors"
+                    >
+                      {t.nav.signOut}
+                    </button>
+                  </div>
                 ) : (
                   <div className="flex flex-col gap-2">
                     <Link
