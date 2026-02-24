@@ -198,13 +198,25 @@ export default function ProfilePage() {
                 {t.profile.phone}
                 <span className="text-gray-400 ml-1 font-normal">{t.profile.phoneOptional}</span>
               </label>
-              <input
-                type="tel"
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-                placeholder="9XXX XXXX"
-                className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
-              />
+              <div className="flex items-center w-full bg-gray-50 border-2 border-gray-200 rounded-xl focus-within:bg-white focus-within:border-green-500 focus-within:ring-4 focus-within:ring-green-500/10 transition-all duration-200">
+                <span className="pl-4 pr-2 text-gray-500 text-sm font-medium select-none">
+                  +852
+                </span>
+                <input
+                  type="tel"
+                  value={phone}
+                  onChange={(e) => {
+                    const digits = e.target.value.replace(/\D/g, '').slice(0, 8)
+                    const formatted = digits.length > 4
+                      ? `${digits.slice(0, 4)} ${digits.slice(4)}`
+                      : digits
+                    setPhone(formatted)
+                  }}
+                  className="w-full py-2.5 pr-4 bg-transparent outline-none"
+                  placeholder={t.signup.phonePlaceholder}
+                  maxLength={9}
+                />
+              </div>
             </div>
             <button
               onClick={handleSaveProfile}
