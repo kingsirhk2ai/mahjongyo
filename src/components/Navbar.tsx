@@ -37,17 +37,17 @@ export default function Navbar() {
   return (
     <nav className="sticky top-0 z-50 glass border-b border-gray-200/50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
+        <div className="flex items-center justify-between h-14">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2 group">
             <Image
               src="/images/mjparty_logo.png"
               alt="麻雀Party"
-              width={40}
-              height={40}
+              width={32}
+              height={32}
               className="rounded-xl"
             />
-            <span className="text-2xl font-bold bg-gradient-to-r from-green-600 to-green-500 bg-clip-text text-transparent">
+            <span className="text-xl font-bold bg-gradient-to-r from-green-600 to-green-500 bg-clip-text text-transparent">
               麻雀Party!
             </span>
           </Link>
@@ -61,7 +61,7 @@ export default function Navbar() {
                   key={link.href}
                   href={link.href}
                   onClick={() => handleNavClick(link.href, link.label)}
-                  className={`flex items-center gap-2 px-4 py-2 rounded-xl font-medium transition-all duration-200 ${
+                  className={`flex items-center gap-2 px-3 py-1.5 rounded-xl text-sm font-medium transition-all duration-200 ${
                     isActive(link.href)
                       ? 'bg-green-600 text-white shadow-lg shadow-green-500/30'
                       : 'text-gray-600 hover:bg-green-50 hover:text-green-600'

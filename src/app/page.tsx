@@ -22,13 +22,13 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4 flex items-center justify-center gap-4 relative">
           <span className="text-2xl animate-bounce">🀄</span>
           <div className="text-center">
-            <span className="font-bold text-lg md:text-xl">{language === 'zh-TW' ? '新蒲崗五芳街' : 'Ng Fong St, San Po Kong'}</span>
+            <span className="font-bold text-lg md:text-xl">{language === 'zh-TW' ? '鑽石山・新蒲崗五芳街' : 'Diamond Hill · Ng Fong St, San Po Kong'}</span>
             <span className="mx-2 hidden sm:inline">|</span>
             <span className="text-white/90 hidden sm:inline">
-              {language === 'zh-TW' ? '新蒲崗五芳街 ・ 24小時私人麻雀房' : 'Ng Fong Street, San Po Kong · 24-Hour Private Mahjong Room'}
+              {language === 'zh-TW' ? '鑽石山站B出口 ・ 24小時私人麻雀房' : 'Diamond Hill MTR Exit B · 24-Hour Private Mahjong Room'}
             </span>
             <span className="text-white/90 sm:hidden block text-sm mt-1">
-              {language === 'zh-TW' ? '新蒲崗 ・ 24小時麻雀房' : '24-Hour Mahjong Room'}
+              {language === 'zh-TW' ? '鑽石山站B出口 ・ 24小時麻雀房' : 'Diamond Hill MTR · 24-Hour Mahjong Room'}
             </span>
           </div>
           <span className="text-2xl animate-bounce" style={{ animationDelay: '0.5s' }}>🀄</span>

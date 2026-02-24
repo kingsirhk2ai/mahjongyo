@@ -1,15 +1,14 @@
 import { initializeApp, getApps } from 'firebase/app'
 import { getAnalytics, isSupported, Analytics } from 'firebase/analytics'
 
-// TODO: Replace with MJ Party Firebase project credentials
 const firebaseConfig = {
-  apiKey: "AIzaSyDG5WyCnKBZaVW8WeQ2AHOXdlbxJe_u5IA",
-  authDomain: "pickleyo-4d52c.firebaseapp.com",
-  projectId: "pickleyo-4d52c",
-  storageBucket: "pickleyo-4d52c.firebasestorage.app",
-  messagingSenderId: "29592653314",
-  appId: "1:29592653314:web:1b83f9792505805534211b",
-  measurementId: "G-5WDNJT6S3R"
+  apiKey: "AIzaSyDR2Z87kh4XrH8w9HY_ekUFzw7AN5pJ8Zw",
+  authDomain: "mjparty-f78ff.firebaseapp.com",
+  projectId: "mjparty-f78ff",
+  storageBucket: "mjparty-f78ff.firebasestorage.app",
+  messagingSenderId: "901670008574",
+  appId: "1:901670008574:web:900ccdf09f9067437f97af",
+  measurementId: "G-QMMFQW0996"
 }
 
 // Initialize Firebase
