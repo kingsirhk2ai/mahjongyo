@@ -213,7 +213,7 @@ export default function ProfilePage() {
                     setPhone(formatted)
                   }}
                   className="w-full py-2.5 pr-4 bg-transparent outline-none"
-                  placeholder={t.signup.phonePlaceholder}
+                  placeholder={t.profile.phonePlaceholder}
                   maxLength={9}
                 />
               </div>
