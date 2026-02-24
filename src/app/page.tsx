@@ -228,6 +228,63 @@ export default function Home() {
         </div>
       </section>
 
+      {/* How to Book Section */}
+      <section className="py-24 bg-white relative overflow-hidden">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
+          <div className="text-center mb-16">
+            <span className="inline-block px-4 py-2 bg-green-100 text-green-700 rounded-full text-sm font-semibold mb-4">
+              {t.home.howToBook}
+            </span>
+            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
+              {t.home.howToBookSubtitle}
+            </h2>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-8 items-start">
+            {/* Step 1 */}
+            <div className="flex flex-col items-center text-center relative">
+              <div className="w-10 h-10 bg-green-100 text-green-700 rounded-full flex items-center justify-center text-lg font-bold mb-4">
+                1
+              </div>
+              <h3 className="text-xl font-bold text-gray-800 mb-2">{t.home.step1Title}</h3>
+              <p className="text-gray-600">{t.home.step1Desc}</p>
+              {/* Connector line - hidden on mobile */}
+              <div className="hidden md:block absolute top-5 left-[calc(50%+32px)] w-[calc(100%-64px)] border-t-2 border-dashed border-green-200" />
+            </div>
+
+            {/* Step 2 */}
+            <div className="flex flex-col items-center text-center relative">
+              <div className="w-10 h-10 bg-green-100 text-green-700 rounded-full flex items-center justify-center text-lg font-bold mb-4">
+                2
+              </div>
+              <h3 className="text-xl font-bold text-gray-800 mb-2">{t.home.step2Title}</h3>
+              <p className="text-gray-600">{t.home.step2Desc}</p>
+              {/* Connector line - hidden on mobile */}
+              <div className="hidden md:block absolute top-5 left-[calc(50%+32px)] w-[calc(100%-64px)] border-t-2 border-dashed border-green-200" />
+            </div>
+
+            {/* Step 3 */}
+            <div className="flex flex-col items-center text-center">
+              <div className="w-10 h-10 bg-green-100 text-green-700 rounded-full flex items-center justify-center text-lg font-bold mb-4">
+                3
+              </div>
+              <h3 className="text-xl font-bold text-gray-800 mb-2">{t.home.step3Title}</h3>
+              <p className="text-gray-600">{t.home.step3Desc}</p>
+            </div>
+          </div>
+
+          <div className="mt-12 text-center">
+            <Link
+              href="/book"
+              className="inline-flex items-center gap-2 bg-gradient-to-r from-green-600 to-emerald-500 text-white px-8 py-4 rounded-2xl text-lg font-bold hover:shadow-xl hover:scale-105 transition-all duration-200"
+            >
+              <CalendarIcon className="w-5 h-5" />
+              {t.home.bookNowCta}
+            </Link>
+          </div>
+        </div>
+      </section>
+
       {/* Court Image Section */}
       <section className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
