@@ -86,15 +86,6 @@ export const metadata: Metadata = {
       'max-snippet': -1,
     },
   },
-  icons: {
-    icon: [
-      { url: '/favicon.ico', sizes: '48x48', type: 'image/x-icon' },
-      { url: '/images/icon-192.png', sizes: '192x192', type: 'image/png' },
-      { url: '/images/icon-512.png', sizes: '512x512', type: 'image/png' },
-    ],
-    apple: '/apple-icon.png',
-    shortcut: '/favicon.ico',
-  },
   verification: {
     // Add your Google Search Console verification code here
     // google: 'your-google-verification-code',
