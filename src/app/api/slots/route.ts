@@ -25,13 +25,13 @@ function seededRandom(seed: number): () => number {
   }
 }
 
-// Generate fake booked hours for a date (~1/3 of slots, preserving consecutive free blocks)
+// Generate fake booked hours for a date (~1/6 of slots, preserving consecutive free blocks)
 function getFakeBookedHours(date: string): Set<number> {
   const seed = hashDate(date)
   const rand = seededRandom(seed)
 
-  // Pick ~8 hours out of 24 to fake-book (about 1/3)
-  const TARGET = 8
+  // Pick ~4 hours out of 24 to fake-book (about 1/6)
+  const TARGET = 4
   const fakeBooked = new Set<number>()
 
   // Strategy: scatter individual bookings and small clusters,
