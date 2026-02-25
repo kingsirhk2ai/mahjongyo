@@ -13,6 +13,7 @@ function LoginForm() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
   const router = useRouter()
   const searchParams = useSearchParams()
   const toast = useToast()
@@ -23,6 +24,7 @@ function LoginForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
+    setError('')
 
     try {
       const result = await signIn('credentials', {
@@ -33,7 +35,7 @@ function LoginForm() {
 
       if (result?.error) {
         trackEvent(EventTypes.LOGIN_FAIL, { eventData: { error: result.error } })
-        toast.error(t.login.invalidCredentials)
+        setError(t.login.invalidCredentials)
       } else {
         // Track successful login
         trackEvent(EventTypes.LOGIN)
@@ -71,7 +73,7 @@ function LoginForm() {
               type="email"
               id="email"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={(e) => { setEmail(e.target.value); setError('') }}
               required
               className="input-modern"
               placeholder="you@example.com"
@@ -86,12 +88,21 @@ function LoginForm() {
               type="password"
               id="password"
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={(e) => { setPassword(e.target.value); setError('') }}
               required
               className="input-modern"
               placeholder="••••••••"
             />
           </div>
+
+          {error && (
+            <div className="flex items-center gap-2 px-4 py-3 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm">
+              <svg className="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              {error}
+            </div>
+          )}
 
           <button
             type="submit"
